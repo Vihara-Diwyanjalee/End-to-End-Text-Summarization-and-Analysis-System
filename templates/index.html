@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarization and Analysis System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Text Summarization and Analysis System</h1>
+
+        <!-- Display login or signup option if not authenticated -->
+        {% if not current_user.is_authenticated %}
+            <div class="auth-container">
+                <a href="{{ url_for('login') }}">Login</a> |
+                <a href="{{ url_for('signup') }}">Signup</a>
+            </div>
+        {% else %}
+            <!-- Display Logout option if user is logged in -->
+            <div class="auth-container">
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <!-- Show history button -->
+        {% if current_user.is_authenticated %}
+        <div class="history-button-container">
+            <button id="show-history-btn" class="btn">Show Summarize History</button>
+        </div>
+
+        <!-- Display user chat history if logged in (Initially hidden) -->
+        <div class="history-container" id="history-container" style="display:none;">
+            <h2>Your Summarize History</h2>
+            <ul>
+            {% for chat in chat_history %}
+                <li>{{ chat.chat_summary }}</li>
+            {% else %}
+                <li>No chat history available yet.</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="input-container">
+            <textarea id="input-text" placeholder="Enter or paste your text here"></textarea>
+            <button id="paste-btn">Paste Text</button>
+            <button id="analyze-btn">Summarize</button>
+        </div>
+        
+        <div class="output-container">
+            <h3>Summary Output:</h3>
+            <div id="summary-text"></div>
+            
+            <h3>Keywords:</h3>
+            <div id="keywords-text"></div>
+            
+            <h3>Topics:</h3>
+            <ul id="topics-list"></ul>
+            
+            <h3>Sentiment:</h3>
+            <div id="sentiment-text"></div>
+        </div>
+
+        <!-- Upload section restricted to authenticated users -->
+        <div class="input-container">
+            {% if current_user.is_authenticated %}
+                <form id="upload-form" enctype="multipart/form-data">
+                    <h3>Or Upload PDF for Summarization:</h3>
+                    <input type="file" id="file-input" name="file" accept=".pdf">
+                    <button type="submit">Upload PDF</button>
+                </form>
+            {% else %}
+                <h3>Please <a href="{{ url_for('login') }}">login</a> to upload PDFs for summarization.</h3>
+            {% endif %}
+        </div>
+
+        <div class="output-container">
+            <h3>Download Summarized PDF:</h3>
+            <a id="download-link" style="display:none;" href="#">Download PDF</a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

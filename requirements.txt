@@ -1,0 +1,12 @@
+flask
+Flask-SQLAlchemy
+Flask-Login
+werkzeug
+transformers
+torch
+requests
+keybert
+gensim
+nltk
+PyPDF2
+fpdf
