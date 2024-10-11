@@ -17,6 +17,13 @@ document.getElementById('analyze-btn').addEventListener('click', async function(
         return;
     }
 
+    // Validate word count (minimum 40 words required)
+    let wordCount = text.trim().split(/\s+/).length;
+    if (wordCount < 40) {
+        alert('The text is too short for summarization. Please enter at least 40 words.');
+        return;
+    }
+
     // Send text to backend for analysis
     let response = await fetch('/analyze', {
         method: 'POST',

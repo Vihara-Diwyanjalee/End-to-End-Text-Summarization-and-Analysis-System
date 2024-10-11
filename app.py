@@ -62,10 +62,20 @@ def chunk_text(text, max_tokens=512):
     return [tokenizer.decode(chunk, skip_special_tokens=True) for chunk in chunks]
 
 def summarize_text(text):
-    chunks = chunk_text(text)
-    summary = ''
-    for chunk in chunks:
-        summary += summarizer(chunk, max_length=100, min_length=30, num_beams=4, early_stopping=True)[0]['summary_text'] + ' '
+    word_count = len(text.split())
+
+    # Handle too short inputs
+    if word_count < 40:
+        return "The text is too short for summarization. Please enter at least 40 words."
+    elif 40 <= word_count <= 60:
+        summary = summarizer(text, max_length=30, min_length=20, num_beams=4, early_stopping=True)[0]['summary_text']
+    elif 60 < word_count <= 100:
+        summary = summarizer(text, max_length=50, min_length=30, num_beams=4, early_stopping=True)[0]['summary_text']
+    elif 100 < word_count <= 200:
+        summary = summarizer(text, max_length=100, min_length=50, num_beams=4, early_stopping=True)[0]['summary_text']
+    else:
+        summary = summarizer(text, max_length=150, min_length=100, num_beams=4, early_stopping=True)[0]['summary_text']
+
     return summary.strip()
 
 def extract_keywords(text):
@@ -217,7 +227,6 @@ def upload_file():
 
 # Route for analyzing text
 @app.route('/analyze', methods=['POST'])
-@login_required
 def analyze():
     data = request.get_json()
     text = data.get('text', '')
@@ -231,9 +240,10 @@ def analyze():
     sentiment_label, sentiment_score = analyze_sentiment(text)
 
     # Save chat history
-    chat_history = ChatHistory(user_id=current_user.id, chat_summary=summary)
-    db.session.add(chat_history)
-    db.session.commit()
+    if current_user.is_authenticated:
+            chat_history = ChatHistory(user_id=current_user.id, chat_summary=summary)
+            db.session.add(chat_history)
+            db.session.commit()
 
     return jsonify({
         'summary': summary,
@@ -247,4 +257,4 @@ if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug= False)

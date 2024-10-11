@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Squada+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Strait&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
+    <div class="signup-container">
         <h1>Signup</h1>
         <form action="/signup" method="POST">
             <div class="form-group">
@@ -42,7 +44,7 @@
 
             <button type="submit" class="btn">Signup</button>
         </form>
-
+        <br>
         <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
     </div>
 </body>
